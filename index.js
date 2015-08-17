@@ -2,106 +2,110 @@ var request = require("request")
 
 // 1 - doesn't appear in QC results, 2 - appears in QC results
 var FIELDS = {
-  'TD':2,
-  'TD1H':1,
-  'TD15M':2,
-  'TD1HCHG':1,
-  'RH':2,
-  'RH1H':1,
-  'RH15M':2,
-  'RH1HCHG':1,
-  'Q':2,
-  'Q1H':1,
-  'Q15M':2,
-  'Q1HCHG':1,
-  'DPD':2,
-  'DPD1H':1,
-  'DPD15M':2,
-  'DPD1HC':1,
-  'AH':2,
-  'AH1H':1,
-  'AH15M':2,
-  'AH1HCHG':1,
-  'WVMR':2,
-  'WVMR15M':2,
-  'WVMR1HC':1,
-  'ALTSE':2,
-  'ALTS15M':2,
-  'AL1HCHG':1,
-  'PT3':1,
-  'SLP':2,
-  'P':2,
-  'P15M':2,
-  'T':2,
-  'T1H':1,
-  'T15M':2,
-  'T1HCHG':1,
-  'ARCHVT':2,
-  'TV':2,
-  'TV1H':1,
-  'TV15M':2,
-  'TV1HCHG':1,
-  'DD':2,
-  'DD1H':1,
-  'DD15M':1,
-  'DDM15M':1,
-  'DDU15M':1,
-  'DD24H':1,
-  'DDSD15M':1,
-  'FF':2,
-  'FF1H':1,
-  'FF15M':2,
-  'FF24H':1,
-  'FFSD15M':2,
-  'U':2,
-  'U1H':1,
-  'U15M':2,
-  'U24H':1,
-  'USD15M':2,
-  'V':2,
-  'V1H':1,
-  'V15M':2,
-  'V24H':1,
-  'VSD15M':2,
-  'VIS':1,
-  'PCP5M':1,
-  'PCP15M':1,
-  'PCP1H':1,
-  'PCP3H':1,
-  'PCP6H':1,
-  'PCP12H':1,
-  'PCP18H':1,
-  'PCP24H':1,
-  'PCPLM':1,
-  'PCPUTCM':1,
-  'PCPCDAY':1,
-  'PCPUDAY':1,
-  'PCPRATE':1,
-  'ARCHPCP':1,
-  'SOILMP':1,
-  'SOILM2':1,
-  'SOILM4':1,
-  'SOILM8':1,
-  'SOILM20':1,
-  'SOILM40':1,
-  'SOILT':2,
-  'SOILT2':2,
-  'SOILT4':2,
-  'SOILT8':2,
-  'SOILT20':2,
-  'SOILT40':2,
-  'DDGUST':1,
-  'FFGUST':1,
-  'FF24MAX':1,
-  'T24MIN':1,
-  'T24MAX':1,
-  'DDMAX1H':1,
-  'FFMAX1H':2,
-  'SNOWC':1,
-  'SNOW6H':1,
-  'SNOW24H':1,
-  'SST':2
+  'TD': {qc:true},
+  'TD1H': {qc:false},
+  'TD15M': {qc:true},
+  'TD1HCHG': {qc:false},
+  'RH': {qc:true},
+  'RH1H': {qc:false},
+  'RH15M': {qc:true},
+  'RH1HCHG': {qc:false},
+  'Q': {qc:true},
+  'Q1H': {qc:false},
+  'Q15M': {qc:true},
+  'Q1HCHG': {qc:false},
+  'DPD': {qc:true},
+  'DPD1H': {qc:false},
+  'DPD15M': {qc:true},
+  'DPD1HC': {qc:false},
+  'AH': {qc:true},
+  'AH1H': {qc:false},
+  'AH15M': {qc:true},
+  'AH1HCHG': {qc:false},
+  'WVMR': {qc:true},
+  'WVMR15M': {qc:true},
+  'WVMR1HC': {qc:false},
+  'ALTSE': {qc:true},
+  'ALTS15M': {qc:true},
+  'AL1HCHG': {qc:false},
+  'PT3': {qc:false},
+  'SLP': {qc:true},
+  'P': {qc:true},
+  'P15M': {qc:true},
+  'T': {qc:true},
+  'T1H': {qc:false},
+  'T15M': {qc:true},
+  'T1HCHG': {qc:false},
+  'ARCHVT': {qc:true},
+  'TV': {qc:true},
+  'TV1H': {qc:false},
+  'TV15M': {qc:true},
+  'TV1HCHG': {qc:false},
+  'DD': {qc:true},
+  'DD1H': {qc:false},
+  'DD15M': {qc:false},
+  'DDM15M': {qc:false},
+  'DDU15M': {qc:false},
+  'DD24H': {qc:false},
+  'DDSD15M': {qc:false},
+  'FF': {qc:true},
+  'FF1H': {qc:false},
+  'FF15M': {qc:true},
+  'FF24H': {qc:false},
+  'FFSD15M': {qc:true},
+  'U': {qc:true},
+  'U1H': {qc:false},
+  'U15M': {qc:true},
+  'U24H': {qc:false},
+  'USD15M': {qc:true},
+  'V': {qc:true},
+  'V1H': {qc:false},
+  'V15M': {qc:true},
+  'V24H': {qc:false},
+  'VSD15M': {qc:true},
+  'VIS': {qc:false},
+  'PCP5M': {qc:false},
+  'PCP15M': {qc:false},
+  'PCP1H': {qc:false},
+  'PCP3H': {qc:false},
+  'PCP6H': {qc:false},
+  'PCP12H': {qc:false},
+  'PCP18H': {qc:false},
+  'PCP24H': {qc:false},
+  'PCPLM': {qc:false},
+  'PCPUTCM': {qc:false},
+  'PCPCDAY': {qc:false},
+  'PCPUDAY': {qc:false},
+  'PCPRATE': {qc:false},
+  'ARCHPCP': {qc:false},
+  'SOILMP': {qc:false},
+  'SOILM2': {qc:false},
+  'SOILM4': {qc:false},
+  'SOILM8': {qc:false},
+  'SOILM20': {qc:false},
+  'SOILM40': {qc:false},
+  'SOILT': {qc:true},
+  'SOILT2': {qc:true},
+  'SOILT4': {qc:true},
+  'SOILT8': {qc:true},
+  'SOILT20': {qc:true},
+  'SOILT40': {qc:true},
+  'DDGUST': {qc:false},
+  'FFGUST': {qc:false},
+  'FF24MAX': {qc:false},
+  'T24MIN': {qc:false},
+  'T24MAX': {qc:false},
+  'DDMAX1H': {qc:false},
+  'FFMAX1H': {qc:true},
+  'SNOWC': {qc:false},
+  'SNOW6H': {qc:false},
+  'SNOW24H': {qc:false},
+  'SST': {qc:true},
+  'SKYCVLB': {qc:false, numCols:6},
+  'SKYCOV': {qc:false, type:'text', numCols:6},
+  'PCPTYPE': {qc:false, numCols:2}
 }
+
 
 function query(opts, callback) {
   
@@ -171,8 +175,29 @@ function parseObservationString(opts, str, callback) {
     },
     id = obs.station_name+'-'+obs.timestamp
     
+    var col_i = 8,
+        n_cols = 1,
+        field
+    
     for(var f = 0; f < fields.length; f++) {
-      obs[fields[f]] = parseFloat(cols[8+f])
+      field = fields[f]
+      n_cols = FIELDS[field].numCols || 1
+      
+      if(n_cols == 1) {
+        obs[field] = (FIELDS[field].type == 'text') ?
+                     cols[col_i].trim() :
+                     parseFloat(cols[col_i])
+        
+      } else {
+        obs[field] = []
+        for(var c = 0; c < n_cols; c++) {
+          obs[field].push((FIELDS[field].type == 'text') ?
+                          cols[col_i+c].trim() :
+                          parseFloat(cols[col_i+c]))
+        }
+      }
+      
+      col_i += n_cols
     }
     
     observations[id] = obs
@@ -200,7 +225,7 @@ exports.download = function(opts, callback) {
   
   for(var i = 0; i < opts.fields.length; i++) {
     if(!FIELDS[opts.fields[i]]) {
-      return callback(new Error('Invalid field: '+opts.fields[i]))
+      return callback(new Error('Invalid field: '+opts.fields[i]+'. If it is valid, please add it to the FIELDS array.'))
     }
   }
   
@@ -223,7 +248,7 @@ exports.download = function(opts, callback) {
       if(observations && observations_qc) {
         for(var s in observations) {
           for(var f in observations[s]) {
-            if(FIELDS[f] == 2 && observations_qc[s]) {
+            if(FIELDS[f] && FIELDS[f].qc && observations_qc[s]) {
               observations[s][f] = observations_qc[s][f]
             }
           }
@@ -251,7 +276,7 @@ exports.download = function(opts, callback) {
     // Do any of the fields actually not exist in QC results?
     var query_for_non_qc = false
     for(var i = 0; i < opts.fields.length; i++) {
-      if(FIELDS[opts.fields[i]] == 1) {
+      if(!FIELDS[opts.fields[i]].qc) {
         query_for_non_qc = true
         break
       }
