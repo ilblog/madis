@@ -1,6 +1,5 @@
 var request = require("request")
 
-// 1 - doesn't appear in QC results, 2 - appears in QC results
 var FIELDS = {
   'TD': {qc:true},
   'TD1H': {qc:false},
@@ -248,7 +247,7 @@ exports.download = function(opts, callback) {
       if(observations && observations_qc) {
         for(var s in observations) {
           for(var f in observations[s]) {
-            if(FIELDS[f] && FIELDS[f].qc && observations_qc[s]) {
+            if(FIELDS[f] && FIELDS[f].qc && observations_qc[s] && observations_qc[s][f] != null && !isNaN(observations_qc[s][f])) {
               observations[s][f] = observations_qc[s][f]
             }
           }
