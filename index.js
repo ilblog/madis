@@ -112,7 +112,7 @@ function query(opts, callback) {
       minbck = opts.window ? Math.round(opts.window/-60) : -120,
       recwin = opts.onlyLatest ? 1 : 4
   
-  var url = 'https://madis-data.noaa.gov/madisPublic/cgi-bin/madisXmlPublicDir?rdr=&time=0&minbck='+minbck+'&minfwd=0&recwin='+recwin+'&dfltrsel=0&latll=0.0&lonll=0.0&latur=90.0&lonur=0.0&stanam=&stasel=0&pvdrsel=0&varsel=1&qcsel='+qcsel+'&xml=2&csvmiss=1&nvars=LAT&nvars=LON&nvars=ELEV'
+  var url = 'https://madis-data.ncep.noaa.gov/madisPublic1/cgi-bin/madisXmlPublicDir?rdr=&time=0&minbck='+minbck+'&minfwd=0&recwin='+recwin+'&dfltrsel=0&latll=0.0&lonll=0.0&latur=90.0&lonur=0.0&stanam=&stasel=0&pvdrsel=0&varsel=1&qcsel='+qcsel+'&xml=2&csvmiss=1&nvars=LAT&nvars=LON&nvars=ELEV'
   
   for(var i = 0; i < opts.fields.length; i++) {
     url += '&nvars='+opts.fields[i]
