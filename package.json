@@ -1,5 +1,5 @@
 {
   "name": "madis",
   "description": "An interface to the NOAA MADIS weather station database.",
-  "version": "0.0.3"
+  "version": "0.1.0"
 }
