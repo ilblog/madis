@@ -102,6 +102,7 @@ var FIELDS = {
   'SNOW6H': {qc:false},
   'SNOW24H': {qc:false},
   'SST': {qc:true},
+  'ELEV': {qc:false},
   'SKYCVLB': {qc:false, numCols:6},
   'SKYCOV': {qc:false, type:'text', numCols:6},
   'PCPTYPE': {qc:false, numCols:2},
@@ -802,6 +803,17 @@ exports.downloadHourly = function(time, opts, callback) {
       var obs = compileHourly(time, stations[station_name], opts)
       if(obs && hasData(obs)) {
         observations.push(obs)
+      }
+    }
+    
+    // Cast all missing data to NaN
+    var obs
+    for(var i = 0; i < observations.length; i++) {
+      obs = observations[i]
+      for(var field in obs) {
+        if(obs[field] === null || obs[field] === undefined) {
+          obs[field] = NaN
+        }
       }
     }
     
