@@ -348,10 +348,20 @@ function avgSKYCOV(vals) {
 function query(opts, callback) {
   
   var qcsel = opts.qc ? 3 : 1,
-      minbck = opts.window ? Math.round(opts.window/-60) : -120,
-      recwin = opts.onlyLatest ? 1 : 4
+      minbck = opts.minbck ? Math.round(opts.minbck/-60) :
+               opts.window ? Math.round(opts.window/-60) : -120,
+      minfwd = opts.minfwd ? Math.round(opts.minfwd/60) : 0,
+      recwin = opts.onlyLatest ? 1 : 4,
+      time = opts.time
   
-  var url = 'https://madis-data.ncep.noaa.gov/madisPublic1/cgi-bin/madisXmlPublicDir?rdr=&time=0&minbck='+minbck+'&minfwd=0&recwin='+recwin+'&dfltrsel=0&latll=0.0&lonll=0.0&latur=90.0&lonur=0.0&stanam=&stasel=0&pvdrsel=0&varsel=1&qcsel='+qcsel+'&xml=2&csvmiss=1&nvars=LAT&nvars=LON&nvars=ELEV'
+  if(!time) {
+    time = '0'
+  } else {
+    var date = new Date(1000*time)
+    time = date.getUTCFullYear()+("0"+(1+date.getUTCMonth())).slice(-2)+("0"+date.getUTCDate()).slice(-2)+"_"+("0"+date.getUTCHours()).slice(-2)+"00"
+  }
+  
+  var url = 'https://madis-data.ncep.noaa.gov/madisPublic1/cgi-bin/madisXmlPublicDir?rdr=&time='+time+'&minbck='+minbck+'&minfwd='+minfwd+'&recwin='+recwin+'&dfltrsel=0&latll=0.0&lonll=0.0&latur=90.0&lonur=0.0&stanam=&stasel=0&pvdrsel=0&varsel=1&qcsel='+qcsel+'&xml=2&csvmiss=1&nvars=LAT&nvars=LON&nvars=ELEV'
   
   for(var i = 0; i < opts.fields.length; i++) {
     url += '&nvars='+opts.fields[i]
@@ -543,43 +553,13 @@ function averageObservations(observations) {
         val = null
       }
     
-    // Find the extrema value as the default
+    // Find the latest value as the default
     } else {
-      var v, start_val = null, end_val = null,
-          high_val = -Infinity, low_val = Infinity
-      
-      val = 0
-      for(var i = 0; i < observations.length; i++) {
-        v = observations[i][field]
-        if(isNaN(v) || v == null) {
-          continue
-        }
-        
-        val += observations[i][field]
-        n++
-        
-        if(start_val == null)
-          start_val = v
-        
-        end_val = v
-        
-        if(v > high_val)
-          high_val = v
-        
-        if(v < low_val)
-          low_val = v
-      }
-      
-      if(n == 0) {
-        val = null
-      
-      } else {
-        val = val / n
-        
-        if(high_val > start_val && high_val > end_val) {
-          val = high_val
-        } else if(low_val < start_val && low_val < end_val) {
-          val = low_val
+      val = null
+      for(var i = observations.length-1; i >= 0; i--) {
+        if(!isNaN(observations[i][field]) && observations[i][field] != null) {
+          val = observations[i][field]
+          break
         }
       }
     }
@@ -645,7 +625,7 @@ function compileHourly(time, observations, opts) {
   addPointAtTimes([time, Math.round((time_start_hour + time) / 2), time_start_hour], observations)
   
   // Remove any points outside of the hour
-  observations.filter(function(a) {
+  observations = observations.filter(function(a) {
     return a.timestamp >= time_start_hour && a.timestamp <= time
   })
   
@@ -771,6 +751,11 @@ exports.download = function(opts, callback) {
 
 exports.downloadHourly = function(time, opts, callback) {
   opts = opts || {}
+  
+  opts.time = time
+  opts.minbck = 7200
+  opts.minfwd = 3600
+  opts.onlyLatest = false
   
   // Download the raw data
   exports.download(opts, function(err, observations) {

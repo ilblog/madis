@@ -1,7 +1,7 @@
 {
   "name": "madis",
   "description": "An interface to the NOAA MADIS weather station database.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "dependencies": {
     "request": "^2.79.0"
   }
