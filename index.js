@@ -712,12 +712,25 @@ exports.download = function(opts, callback) {
         observations = observations_qc
       }
       
-      // Convert to array and finish
+      // Convert to array
       var obs_array = []
       for(var s in observations) {
         obs_array.push(observations[s])
       }
       obs_array.sort(function(a, b) {return b.timestamp - a.timestamp})
+      
+      // Apply the blacklist
+      if(opts.blacklist) {
+        
+        var blacklist = {}
+        for(var i = 0; i < opts.blacklist.length; i++) {
+          blacklist[opts.blacklist[i]] = true
+        }
+        
+        for(var i = obs_array.length; i--; ) {
+          if(blacklist[obs_array[i].station_name]) obs_array.splice(i, 1)
+        }
+      }
       
       return callback(null, obs_array)
     }
