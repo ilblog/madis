@@ -378,7 +378,8 @@ function query(opts, callback) {
   return request({
       uri: url,
       auth: auth,
-      timeout: opts.timeout ? 1000*opts.timeout : 120000
+      timeout: opts.timeout ? 1000*opts.timeout : 120000,
+      strictSSL: false
     },
     function(err, res, data) {
       if(err) {
