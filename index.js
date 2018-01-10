@@ -117,6 +117,7 @@ function lerp(a, b, x) {
 function lerpObservations(a, b, x) {
   var c = {
     station_name: a.station_name,
+    provider: a.provider,
     lat: a.lat,
     lon: a.lon,
     elev: a.elev
@@ -422,6 +423,7 @@ function parseObservationString(opts, str, callback) {
     
     var obs = {
       station_name: cols[0].trim(),
+      provider: cols[3].trim(),
       lat: parseFloat(cols[5]),
       lon: parseFloat(cols[6]),
       elev: parseFloat(cols[7]),
@@ -470,6 +472,7 @@ function averageObservations(observations) {
   
   var obs = {
     station_name: observations[0].station_name,
+    provider: observations[0].provider,
     lat: observations[0].lat,
     lon: observations[0].lon,
     elev: observations[0].elev
@@ -721,15 +724,26 @@ exports.download = function(opts, callback) {
       obs_array.sort(function(a, b) {return b.timestamp - a.timestamp})
       
       // Apply the blacklist
-      if(opts.blacklist) {
+      if(opts.blacklist || opts.provider_blacklist) {
         
-        var blacklist = {}
-        for(var i = 0; i < opts.blacklist.length; i++) {
-          blacklist[opts.blacklist[i]] = true
+        var station_blacklist = {}
+        if(opts.blacklist) {
+          for(var i = 0; i < opts.blacklist.length; i++) {
+            station_blacklist[opts.blacklist[i]] = true
+          }
+        }
+        
+        var provider_blacklist = {}
+        if(opts.provider_blacklist) {
+          for(var i = 0; i < opts.provider_blacklist.length; i++) {
+            provider_blacklist[opts.provider_blacklist[i]] = true
+          }
         }
         
         for(var i = obs_array.length; i--; ) {
-          if(blacklist[obs_array[i].station_name]) obs_array.splice(i, 1)
+          if(station_blacklist[obs_array[i].station_name] || provider_blacklist[obs_array[i].provider]) {
+            obs_array.splice(i, 1)
+          }
         }
       }
       
